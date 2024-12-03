@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "Web Component that applies a shimmering pixel background on element hover",
   "main": "pixel-canvas.js",
-  "scripts": {},
+  "scripts": {
+    "start": "npx http-server -o demo.html"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hexagoncircle/pixel-canvas.git"

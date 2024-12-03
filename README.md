@@ -20,7 +20,9 @@ Include the component script and then insert a pixel-canvas custom element insid
 
 - `data-colors`: Comma-separated list of color values; i.e. `"#e0f2fe, #7dd3fc, #0ea5e9"`
 - `data-gap`: Amount of space between each pixel. Accepts values between `4` and `50`. 
-- `data-speed`: Controls the general animation duration. Accepts values between `0` and `100`. 
+- `data-speed`: Controls the general animation duration. Accepts values between `0` and `100`.
+
+⚠️ If reduced motion preferences are set, the pixels all fade in at once (no stagger) and do not shimmer (speed is set to `0`).
 
 Example with options:
 

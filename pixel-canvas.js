@@ -1,5 +1,5 @@
 class Pixel {
-  constructor(canvas, context, x, y, color, speed) {
+  constructor(canvas, context, x, y, color, speed, delay) {
     this.width = canvas.width;
     this.height = canvas.height;
     this.ctx = context;
@@ -12,7 +12,7 @@ class Pixel {
     this.minSize = 0.5;
     this.maxSizeInteger = 2;
     this.maxSize = this.getRandomValue(this.minSize, this.maxSizeInteger);
-    this.delay = this.getDistanceToCanvasCenter();
+    this.delay = delay;
     this.counter = 0;
     this.counterStep = Math.random() * 4 + (this.width + this.height) * 0.01;
     this.isIdle = false;
@@ -22,14 +22,6 @@ class Pixel {
 
   getRandomValue(min, max) {
     return Math.random() * (max - min) + min;
-  }
-
-  getDistanceToCanvasCenter() {
-    const dx = this.x - this.width / 2;
-    const dy = this.y - this.height / 2;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-
-    return distance;
   }
 
   draw() {
@@ -129,8 +121,8 @@ class PixelCanvas extends HTMLElement {
     const max = 100;
     const throttle = 0.001;
 
-    if (value <= min) {
-      return min * throttle;
+    if (value <= min || this.reducedMotion) {
+      return min;
     } else if (value >= max) {
       return max * throttle;
     } else {
@@ -153,6 +145,7 @@ class PixelCanvas extends HTMLElement {
     this.ctx = this.canvas.getContext("2d");
     this.timeInterval = 1000 / 60;
     this.timePrevious = performance.now();
+    this.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     this.init();
     this.resizeObserver = new ResizeObserver(() => this.init());
@@ -196,12 +189,21 @@ class PixelCanvas extends HTMLElement {
     this.createPixels();
   }
 
+  getDistanceToCanvasCenter(x, y) {
+    const dx = x - this.canvas.width / 2;
+    const dy = y - this.canvas.height / 2;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    return distance;
+  }
+
   createPixels() {
     for (let x = 0; x < this.canvas.width; x += this.gap) {
       for (let y = 0; y < this.canvas.height; y += this.gap) {
         const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        const delay = this.reducedMotion ? 0 : this.getDistanceToCanvasCenter(x, y);
 
-        this.pixels.push(new Pixel(this.canvas, this.ctx, x, y, color, this.speed));
+        this.pixels.push(new Pixel(this.canvas, this.ctx, x, y, color, this.speed, delay));
       }
     }
   }

@@ -91,22 +91,31 @@ main {
     transition-property: color, scale;
   }
 
-  &:hover {
+  button {
+    opacity: 0;
+  }
+
+  &:focus-within {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+  }
+
+  &:where(:hover, :focus-within) {
     border-color: var(--active-color, var(--fg));
     transition: border-color 800ms var(--ease-in-out);
   }
 
-  &:hover svg {
+  &:where(:hover, :focus-within) svg {
     color: var(--active-color, var(--fg));
     scale: 1.1;
     transition: 300ms var(--ease-in-out);
   }
 
-  &:hover::before {
+  &:where(:hover, :focus-within)::before {
     opacity: 0;
   }
 
-  &:hover::after {
+  &:where(:hover, :focus-within)::after {
     opacity: 1;
   }
 }

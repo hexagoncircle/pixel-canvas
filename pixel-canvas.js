@@ -130,6 +130,10 @@ class PixelCanvas extends HTMLElement {
     }
   }
 
+  get noFocus() {
+    return this.hasAttribute("data-no-focus");
+  }
+
   connectedCallback() {
     const canvas = document.createElement("canvas");
     const sheet = new CSSStyleSheet();
@@ -153,12 +157,23 @@ class PixelCanvas extends HTMLElement {
 
     this._parent.addEventListener("mouseenter", this);
     this._parent.addEventListener("mouseleave", this);
+
+    if (!this.noFocus) {
+      this._parent.addEventListener("focusin", this);
+      this._parent.addEventListener("focusout", this);
+    }
   }
 
   disconnectedCallback() {
     this.resizeObserver.disconnect();
     this._parent.removeEventListener("mouseenter", this);
     this._parent.removeEventListener("mouseleave", this);
+
+    if (!this.noFocus) {
+      this._parent.removeEventListener("focusin", this);
+      this._parent.removeEventListener("focusout", this);
+    }
+
     delete this._parent;
   }
 
@@ -167,13 +182,26 @@ class PixelCanvas extends HTMLElement {
   }
 
   onmouseenter() {
-    cancelAnimationFrame(this.animation);
-    this.animation = this.animate("appear");
+    this.handleAnimation("appear");
   }
 
   onmouseleave() {
+    this.handleAnimation("disappear");
+  }
+
+  onfocusin(e) {
+    if (e.currentTarget.contains(e.relatedTarget)) return;
+    this.handleAnimation("appear");
+  }
+
+  onfocusout(e) {
+    if (e.currentTarget.contains(e.relatedTarget)) return;
+    this.handleAnimation("disappear");
+  }
+
+  handleAnimation(name) {
     cancelAnimationFrame(this.animation);
-    this.animation = this.animate("disappear");
+    this.animation = this.animate(name);
   }
 
   init() {

@@ -252,7 +252,7 @@ class PixelCanvas extends HTMLElement {
       this.pixels[i][fnName]();
     }
 
-    if (this.pixels.every((particle) => particle.isIdle)) {
+    if (this.pixels.every((pixel) => pixel.isIdle)) {
       cancelAnimationFrame(this.animation);
     }
   }
